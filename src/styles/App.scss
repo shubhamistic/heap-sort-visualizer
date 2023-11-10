@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  height: 100vh;
+  min-width: 1000px;
+  width: 100vw;
+  display: flex;
+  background-color: #27282c;
+
+  .sidebar {
+    height: 100%;
+    width: 300px;
+  }
+
+  .canvas{
+    height: 100%;
+    flex: 1;
+  }
+}

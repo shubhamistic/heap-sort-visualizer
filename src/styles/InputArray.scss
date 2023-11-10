@@ -1,0 +1,112 @@
+* {
+  box-sizing: border-box;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.input-array {
+  width: 100%;
+  margin-top: 10px;
+  padding: 5px 0 0 5px;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 5px;
+  background-color: #161616;
+
+  .input-element-outer {
+    height: 20px;
+    width: 90px;
+    margin-bottom: 5px;
+    display: flex;
+
+    .input-element-inner {
+      height: 100%;
+      width: 85px;
+      display: flex;
+      border-radius: 5px;
+      border: solid 0.5px rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.05);
+
+      .input-element-index {
+        height: 100%;
+        width: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+
+        p {
+          margin: 0;
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      input {
+        height: 100%;
+        width: 40px;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+        caret-color: white;
+        font-weight: bold;
+        color: whitesmoke;
+        background-color: rgba(255, 255, 255, 0.2);
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .input-element-remove {
+        height: 100%;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.5);
+
+          &:hover {
+            padding: 2px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .input-element-add {
+      height: 100%;
+      width: 5px;
+
+      button {
+        height: calc(100% - 6px);
+        width: 14px;
+        margin: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: unset;
+
+        .icon {
+          font-size: 14px;
+          color: white;
+        }
+
+        &:hover {
+          border-radius: 5px;
+          background-color: rgba(255, 255, 255, 0.5);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
