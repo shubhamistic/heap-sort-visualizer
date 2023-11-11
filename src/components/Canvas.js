@@ -4,7 +4,7 @@ import {
   faChevronLeft, faChevronRight, faRotateRight, faPlay, faPause
 } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Canvas.scss';
-import { useAnimation } from '../hooks/useProvideAnimation';
+import { useAnimation } from '../hooks';
 import TreeNode from './TreeNode';
 
 export default function Canvas() {

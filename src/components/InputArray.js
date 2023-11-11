@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../styles/InputArray.scss';
-import { useAnimation } from '../hooks/useProvideAnimation';
+import { useAnimation } from '../hooks';
 
 export default function InputArray() {
   const {array, setArray, lockArrayInput} = useAnimation();

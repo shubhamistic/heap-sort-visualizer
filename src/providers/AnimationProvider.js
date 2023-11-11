@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { useProvideAnimation } from '../hooks/useProvideAnimation';
+import { useProvideAnimation } from '../hooks';
 
 export const AnimationContext = createContext({
   array: [],

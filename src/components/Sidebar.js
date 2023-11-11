@@ -1,6 +1,6 @@
 import '../styles/Sidebar.scss';
 import InputArray from './InputArray';
-import { useAnimation } from '../hooks/useProvideAnimation';
+import { useAnimation } from '../hooks';
 
 export default function Sidebar() {
   const {

@@ -14,7 +14,6 @@ function createHeapTreeHelper(array, tree, nodeIndex, swap) {
       value: null,
       level: tree.level - 1
     };
-    tree.highlight = swap && (nodeIndex === swap[0] || nodeIndex === swap[1]);
 
     if (swap) {
       if (nodeIndex === swap[0]) {
@@ -30,8 +29,13 @@ function createHeapTreeHelper(array, tree, nodeIndex, swap) {
   }
 }
 
-export function createHeapTree(array, tree, swap){
-  tree.value = null;
-  tree.level = Math.floor(Math.log2(array.length)) + 1;
+export function createHeapTree(array, swap=null){
+  let tree = {
+    value: null,
+    level: Math.floor(Math.log2(array.length)) + 1
+  };
+
   createHeapTreeHelper(array, tree, 0, swap);
+
+  return tree;
 }

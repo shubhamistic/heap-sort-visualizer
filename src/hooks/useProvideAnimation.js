@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import { AnimationContext } from '../providers/AnimationProvider';
+import { AnimationContext } from '../providers';
 import {
   buildMinHeap,
   buildMaxHeap,
   buildMinHeapAndSort,
-  buildMaxHeapAndSort
+  buildMaxHeapAndSort,
+  createHeapTree
 } from '../utils';
-import { createHeapTree } from '../utils/createHeapTree';
 
 export const useAnimation = () => {
   return useContext(AnimationContext);
@@ -27,7 +27,7 @@ export const useProvideAnimation = () => {
   const [executionType, setExecutionType] = useState('');
   const [treeInfo, setTreeInfo] = useState({});
   const [isAnimationRunning, setIsAnimationRunning] = useState(false);
-  const [isAnimationRestarting, setIsAnimatinRestarting] = useState(false);
+  const [isAnimationRestarting, setIsAnimationRestarting] = useState(false);
 
   useEffect(() => {
     setArray(['', '', '']);
@@ -58,22 +58,18 @@ export const useProvideAnimation = () => {
   const runAnimation = async (stepsToSolve, stepNumber) => {
     setIsAnimationRunning(true);
 
-    let tree = {};
-
     if (stepNumber === 0) {
-      createHeapTree(stepsToSolve[0].array, tree);
-      setTreeInfo(tree);
+      const initialTree = createHeapTree(stepsToSolve[0].array);
+      setTreeInfo(initialTree);
       await sleep(1000);
     }
     else {
-      tree = {};
-      createHeapTree(stepsToSolve[stepNumber - 1].array, tree, stepsToSolve[stepNumber].swap);
-      setTreeInfo(tree);
+      const transitionTree = createHeapTree(stepsToSolve[stepNumber - 1].array, stepsToSolve[stepNumber].swap);
+      setTreeInfo(transitionTree);
       await sleep(1500);
 
-      tree = {};
-      createHeapTree(stepsToSolve[stepNumber].array, tree);
-      setTreeInfo(tree);
+      const resultTree = createHeapTree(stepsToSolve[stepNumber].array);
+      setTreeInfo(resultTree);
       await sleep(500);
     }
 
@@ -90,7 +86,7 @@ export const useProvideAnimation = () => {
 
   useEffect(() => {
     if (isAnimationRestarting && !isAnimationRunning) {
-      setIsAnimatinRestarting(false);
+      setIsAnimationRestarting(false);
       setNextStepNumber(0);
       setExecutionTypeAutomatic();
     }
@@ -166,7 +162,7 @@ export const useProvideAnimation = () => {
     setExecutionType('automatic');
   }
   const restartAnimation = () => {
-    setIsAnimatinRestarting(true);
+    setIsAnimationRestarting(true);
     setExecutionTypeManual();
     setNextStepNumber(0);
   }

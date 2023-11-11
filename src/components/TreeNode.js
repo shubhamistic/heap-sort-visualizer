@@ -30,7 +30,7 @@ export default function TreeNode(props) {
     >
       {nodeData.value && (
         <>
-          <div className="tree-node-data">
+          <div className="tree-node-container">
             <div
               className="left-arrow"
               style={{
@@ -38,29 +38,32 @@ export default function TreeNode(props) {
                 visibility: (nodeData.left.value ? 'visible' : 'hidden')
               }}
             >
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className="icon"
-              />
+              <FontAwesomeIcon icon={faChevronDown} className="icon" />
             </div>
 
             <div className="middle-container">
-              <p
-                style={{
-                  backgroundColor: (nodeData.highlight ? 'tomato' : ''),
-                  borderColor: (nodeData.highlight ? 'white' : ''),
-                  transform: (nodeData.transitionCoordinates
-                    ? `translate(${nodeData.transitionCoordinates[0]}px, ${nodeData.transitionCoordinates[1]}px)`
-                    : 'none'
-                  ),
-                  transition: (nodeData.transitionCoordinates
-                    ? 'transform 1.5s ease-in-out'
-                    : 'none'
-                  )
-                }}
+              <div
+                className="tree-node-data"
+                style={{ borderColor: (nodeData.transitionCoordinates ? 'white' : '') }}
               >
-                {nodeData.value}
-              </p>
+                <p
+                  style={{
+                    transform: (nodeData.transitionCoordinates
+                      ? `translate(${nodeData.transitionCoordinates[0]}px, ${nodeData.transitionCoordinates[1]}px)`
+                      : 'none'
+                    ),
+                    transition: (nodeData.transitionCoordinates
+                      ? 'transform 1.5s ease-in-out'
+                      : 'none'
+                    ),
+                    border: (nodeData.transitionCoordinates ? 'solid 1px white' : 'none'),
+                    borderRadius: (nodeData.transitionCoordinates ? '5px' : ''),
+                    backgroundColor: (nodeData.transitionCoordinates ? 'tomato' : '')
+                  }}
+                >
+                  {nodeData.value}
+                </p>
+              </div>
 
               <div className="middle-arrows">
                 <div
@@ -82,12 +85,10 @@ export default function TreeNode(props) {
                 visibility: (nodeData.right.value ? 'visible' : 'hidden')
               }}
             >
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className="icon"
-              />
+              <FontAwesomeIcon icon={faChevronDown} className="icon" />
             </div>
           </div>
+
           <div
             className="tree-children"
             style={{
@@ -95,12 +96,8 @@ export default function TreeNode(props) {
               width: (width ? width : 'unset')
             }}
           >
-            <TreeNode
-              nodeData={nodeData.left}
-            />
-            <TreeNode
-            nodeData={nodeData.right}
-            />
+            <TreeNode nodeData={nodeData.left} />
+            <TreeNode nodeData={nodeData.right} />
           </div>
         </>
       )}
