@@ -4,7 +4,7 @@ import { useAnimation } from '../hooks';
 
 export default function Sidebar() {
   const {
-    closeSideBar,
+    closeSideBarWindow,
     lockButtonInput,
     buttons,
     selectBuildMinHeap,
@@ -24,7 +24,7 @@ export default function Sidebar() {
     <div
       className="sidebar"
       style={{
-        animation: (closeSideBar
+        animation: (closeSideBarWindow
           ? 'sideBarSlideLeft 0.5s ease-in-out forwards'
           : 'sideBarSlideRight 0.5s ease-in-out forwards'
         )
@@ -52,7 +52,7 @@ export default function Sidebar() {
           style={{
             backgroundColor: (buttons.buildMinHeap
               ? 'goldenrod'
-              : (lockButtonInput ? 'rgba(255, 255, 255, 0.4)' : '')
+              : (lockButtonInput ? 'gray' : '')
             )
           }}
         >
@@ -65,7 +65,7 @@ export default function Sidebar() {
           style={{
             backgroundColor: (buttons.buildMaxHeap
               ? 'goldenrod'
-              : (lockButtonInput ? 'rgba(255, 255, 255, 0.4)' : '')
+              : (lockButtonInput ? 'gray' : '')
             )
           }}
         >
@@ -78,7 +78,7 @@ export default function Sidebar() {
           style={{
             backgroundColor: (buttons.buildMinHeapAndSort
               ? 'goldenrod'
-              : (lockButtonInput ? 'rgba(255, 255, 255, 0.4)' : '')
+              : (lockButtonInput ? 'gray' : '')
             )
           }}
         >
@@ -91,7 +91,7 @@ export default function Sidebar() {
           style={{
             backgroundColor: (buttons.buildMaxHeapAndSort
               ? 'goldenrod'
-              : (lockButtonInput ? 'rgba(255, 255, 255, 0.4)' : '')
+              : (lockButtonInput ? 'gray' : '')
             )
           }}
         >
@@ -99,6 +99,15 @@ export default function Sidebar() {
         </button>
 
         <p className="p-info">{instructions.i4}</p>
+      </div>
+
+      <div className="author-details">
+        <p className="p-head">Developer:</p>
+        <a
+          className="p-info"
+          href="https://github.com/shubhamistic/"
+          target="_blank"
+        >@Shubhamistic</a>
       </div>
     </div>
   );

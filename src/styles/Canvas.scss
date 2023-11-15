@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* {box-sizing: border-box;}
 
 .canvas {
   position: relative;
@@ -8,38 +6,6 @@
   min-width: 700px;
   width: 100%;
   overflow: auto;
-
-  .sidebar-switch {
-    z-index: 999;
-    position: fixed;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border: solid 1px rgba(255, 255, 255, 0.2);
-    border-top: none;
-    border-left: none;
-    background-color: #1c1c1c;
-    left: 300px;
-
-    .icon {
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-    }
-
-    &:hover {
-      background-color: #2c2c2c;
-      cursor: pointer;
-    }
-  }
-
-  .toggle-sidebar {top: 0;}
-  .restart-animation {top: 40px}
-  .toggle-animation-status {top: 80px}
 
   .row {
     border-bottom: solid 1px rgba(255, 255, 255, 0.1);
@@ -61,23 +27,116 @@
     justify-content: center;
     align-items: center;
   }
+
+  .switch {
+    z-index: 999;
+    position: fixed;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 1px rgba(255, 255, 255, 0.2);
+    background-color: #1c1c1c;
+
+    .icon {
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+    }
+
+    &:hover {
+      background-color: #2c2c2c;
+      cursor: pointer;
+    }
+  }
+
+  //switches
+  .sidebar-switch {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top: none;
+    border-left: none;
+    left: 300px;
+  }
+  .toggle-sidebar {top: 0;}
+  .restart-animation {top: 35px}
+  .toggle-animation-status {top: 70px}
+
+  .execution-log-switch {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: none;
+    border-right: none;
+    right: 0;
+    bottom: 240px;
+  }
+
+  .canvas-operation {
+    position: fixed;
+    right: 15px;
+    top: 15px;
+    height: 75px;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .btn-container {
+      height: 35px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      .stat, button {
+        box-sizing: border-box;
+        height: 100%;
+        width: 50px;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.25);
+
+        p, h3 {
+          margin: 0;
+          color: white;
+          font-size: 10px;
+          font-weight: bold;
+        }
+      }
+
+      .stat {
+        flex-direction: column;
+        justify-content: space-around;
+
+        p, h3{font-size: 12px;}
+        h3 {color: gold;}
+      }
+
+      button {
+        border: solid 1px white;
+
+        .icon {
+          color: white;
+          font-size: 12px;
+        }
+
+        &:hover {background-color: rgba(255, 255, 255, 0.25);}
+      }
+
+      .vertical-btn {
+        flex-direction: column;
+        justify-content: center;
+      }
+      .horizontal-btn {
+        justify-content: space-around;
+      }
+    }
+  }
 }
 
-@keyframes toggleSideBarIconSlideRight {
-  from {left: 0;}
-  to {left: 300px;}
-}
-@keyframes toggleSideBarIconSlideLeft {
-  from {left: 300px;}
-  to {left: 0;}
-}
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-    color: tomato;
-  }
-  to {
-    transform: rotate(360deg);
-    color: tomato;
-  }
-}
+@keyframes toggleSideBarIconSlideRight { from {left: 0;} }
+@keyframes toggleSideBarIconSlideLeft { to {left: 0;} }
+@keyframes toggleExecutionLogIconSlideUp { from {bottom: 0;} }
+@keyframes toggleExecutionLogIconSlideDown { to {bottom: 0;} }
+@keyframes spin { to {transform: rotate(360deg);} }

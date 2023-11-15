@@ -38,7 +38,7 @@
 
   .handle-buttons-input {
     min-height: 220px;
-    height: 220px;
+    height: 170px;
     width: 275px;
     margin-top: 30px;
     display: flex;
@@ -54,17 +54,17 @@
     }
 
     .hbi-btn {
-      height: 30px;
+      height: 25px;
       width: 100%;
-      background-color: rgba(255, 255, 255, 0.75);
-      border: solid 1px  rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.2);
+      border: none;
       border-radius: 5px;
 
       p {
         margin: 0;
         font-size: 12px;
         font-weight: bold;
-        color: black;
+        color: white;
       }
 
       &:hover {
@@ -73,6 +73,23 @@
         transition: 0.2s background-color ease-in-out;
       }
     }
+  }
+
+  .author-details {
+    min-height: 20px;
+    height: 20px;
+    width: 275px;
+    margin-top: 30px;
+    display: flex;
+
+    .p-head, .p-info{
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .p-head {margin: 0 0 10px 5px;}
+    .p-info {color: mediumseagreen;}
   }
 }
 

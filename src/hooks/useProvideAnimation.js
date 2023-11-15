@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { AnimationContext } from '../providers';
 import {
-  buildMinHeap,
-  buildMaxHeap,
-  buildMinHeapAndSort,
-  buildMaxHeapAndSort,
+  buildMinHeap, buildMaxHeap,
+  buildMinHeapAndSort, buildMaxHeapAndSort,
   createHeapTree
 } from '../utils';
 
@@ -14,22 +12,27 @@ export const useAnimation = () => {
 
 export const useProvideAnimation = () => {
   const [array, setArray] = useState([]);
-  const [lockArrayInput, setLockArrayInput] = useState(false);
   const [lockButtonInput, setLockButtonInput] = useState(false);
+  const [selectedOptionName, setSelectedOptionName] = useState('');
   const [buttons, setButtons] = useState({});
-  const [stepsToSolve, setStepsToSolve] = useState([]);
   const [canvasHeight, setCanvasHeight] = useState(0);
   const [canvasWidth, setCanvasWidth] = useState(0);
   const [canvasMinHeight, setCanvasMinHeight] = useState(0);
   const [canvasMinWidth, setCanvasMinWidth] = useState(0);
-  const [closeSideBar, setCloseSideBar] = useState(false);
-  const [nextStepNumber, setNextStepNumber] = useState(0);
-  const [executionType, setExecutionType] = useState('');
+  const [stepsToSolve, setStepsToSolve] = useState([]);
   const [treeInfo, setTreeInfo] = useState({});
+  const [arrayInfo, setArrayInfo] = useState({});
+  const [nextStepNumber, setNextStepNumber] = useState(0);
+  const [closeSideBarWindow, setCloseSideBarWindow] = useState(false);
+  const [closeExecutionLogWindow, setCloseExecutionLogWindow] = useState(false);
+  const [executionType, setExecutionType] = useState('');
   const [isAnimationRunning, setIsAnimationRunning] = useState(false);
   const [isAnimationRestarting, setIsAnimationRestarting] = useState(false);
+  const [animationSpeedInMS, setAnimationSpeedInMS] = useState(0);
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false);
 
   useEffect(() => {
+    // initialization
     setArray(['', '', '']);
     setButtons({
       buildMinHeap: false,
@@ -39,9 +42,11 @@ export const useProvideAnimation = () => {
     });
     setNextStepNumber(0);
     setExecutionType('automatic');
+    setAnimationSpeedInMS(1500);
   }, []);
 
   useEffect(() => {
+    // array validation
     for (let i of array) {
       if (i === '' || i === '-') {
         setLockButtonInput(true);
@@ -50,6 +55,34 @@ export const useProvideAnimation = () => {
     }
     setLockButtonInput(false);
   }, [array]);
+
+  useEffect(() => {
+    // animation handler
+    if (nextStepNumber < stepsToSolve.length) {
+      if (executionType === 'automatic' && !isAnimationPaused){
+        runAnimation(stepsToSolve, nextStepNumber).then(incrementStep);
+      }
+      if (executionType === 'manual' && !isAnimationPaused){
+        runAnimation(stepsToSolve, nextStepNumber).then(pauseAnimation);
+      }
+
+      if (nextStepNumber === stepsToSolve.length - 1) {
+        pauseAnimation();
+      }
+    }
+  }, [stepsToSolve, executionType, nextStepNumber, isAnimationPaused]);
+
+  useEffect(() => {
+    // restart animation handler
+    if (isAnimationRestarting && !isAnimationRunning) {
+      if (executionType === 'automatic') {
+        setNextStepNumber(0);
+        setExecutionTypeAutomatic();
+      }
+      setIsAnimationRestarting(false);
+      playAnimation();
+    }
+  }, [isAnimationRunning, isAnimationRestarting]);
 
   const sleep = async (ms) => {
     return await new Promise((resolve) => setTimeout(resolve, ms));
@@ -61,39 +94,31 @@ export const useProvideAnimation = () => {
     if (stepNumber === 0) {
       const initialTree = createHeapTree(stepsToSolve[0].array);
       setTreeInfo(initialTree);
+      setArrayInfo(stepsToSolve[stepNumber]);
       await sleep(1000);
     }
     else {
       const transitionTree = createHeapTree(stepsToSolve[stepNumber - 1].array, stepsToSolve[stepNumber].swap);
       setTreeInfo(transitionTree);
-      await sleep(1500);
+      setArrayInfo({
+        ...stepsToSolve[stepNumber],
+        array: stepsToSolve[stepNumber - 1].array
+      });
+      await sleep(animationSpeedInMS);
 
       const resultTree = createHeapTree(stepsToSolve[stepNumber].array);
       setTreeInfo(resultTree);
+      if (nextStepNumber === stepsToSolve.length - 1) {
+        setArrayInfo({ array: stepsToSolve[nextStepNumber].array });
+      }
       await sleep(500);
     }
 
     setIsAnimationRunning(false);
   }
 
-  useEffect(() => {
-    if (executionType === 'automatic') {
-      if (nextStepNumber < stepsToSolve.length) {
-        runAnimation(stepsToSolve, nextStepNumber).then(() => incrementStep());
-      }
-    }
-  }, [stepsToSolve, executionType, nextStepNumber]);
-
-  useEffect(() => {
-    if (isAnimationRestarting && !isAnimationRunning) {
-      setIsAnimationRestarting(false);
-      setNextStepNumber(0);
-      setExecutionTypeAutomatic();
-    }
-  }, [isAnimationRunning, isAnimationRestarting]);
-
   const selectBuildMinHeap = () => {
-    setLockArrayInput(true);
+    setSelectedOptionName('buildMinHeap();');
     setButtons({
       buildMinHeap: true,
       buildMaxHeap: false,
@@ -102,10 +127,11 @@ export const useProvideAnimation = () => {
     });
     let newArray = [...array];
     setStepsToSolve(buildMinHeap(newArray));
+    setExecutionTypeAutomatic();
     restartAnimation();
   }
   const selectBuildMaxHeap = () => {
-    setLockArrayInput(true);
+    setSelectedOptionName('buildMaxHeap();');
     setButtons({
       buildMinHeap: false,
       buildMaxHeap: true,
@@ -114,10 +140,11 @@ export const useProvideAnimation = () => {
     });
     let newArray = [...array];
     setStepsToSolve(buildMaxHeap(newArray));
+    setExecutionTypeAutomatic();
     restartAnimation();
   }
   const selectBuildMinHeapAndSort = () => {
-    setLockArrayInput(true);
+    setSelectedOptionName('buildMinHeapAndSort();');
     setButtons({
       buildMinHeap: false,
       buildMaxHeap: false,
@@ -126,10 +153,11 @@ export const useProvideAnimation = () => {
     });
     let newArray = [...array];
     setStepsToSolve(buildMinHeapAndSort(newArray));
+    setExecutionTypeAutomatic();
     restartAnimation();
   }
   const selectBuildMaxHeapAndSort = () => {
-    setLockArrayInput(true);
+    setSelectedOptionName('buildMaxHeapAndSort();');
     setButtons({
       buildMinHeap: false,
       buildMaxHeap: false,
@@ -138,15 +166,15 @@ export const useProvideAnimation = () => {
     });
     let newArray = [...array];
     setStepsToSolve(buildMaxHeapAndSort(newArray));
+    setExecutionTypeAutomatic();
     restartAnimation();
   }
 
-  const toggleSideBar = () => {
-    setCloseSideBar(!closeSideBar);
-  }
+  const toggleSideBarWindow = () => setCloseSideBarWindow(!closeSideBarWindow);
+  const toggleExecutionLogWindow = () => setCloseExecutionLogWindow(!closeExecutionLogWindow)
 
   const incrementStep = () => {
-    if (nextStepNumber < stepsToSolve.length){
+    if (nextStepNumber < stepsToSolve.length - 1){
       setNextStepNumber(nextStepNumber + 1);
     }
   }
@@ -155,25 +183,42 @@ export const useProvideAnimation = () => {
       setNextStepNumber(nextStepNumber - 1);
     }
   }
-  const setExecutionTypeManual= () => {
-    setExecutionType('manual');
-  }
-  const setExecutionTypeAutomatic = () => {
-    setExecutionType('automatic');
-  }
-  const restartAnimation = () => {
-    setIsAnimationRestarting(true);
+
+  const incrementStepManually = () => {
     setExecutionTypeManual();
-    setNextStepNumber(0);
+    restartAnimation();
+    incrementStep();
+  }
+  const decrementStepManually = () => {
+    setExecutionTypeManual();
+    restartAnimation();
+    decrementStep();
+  }
+
+  const increaseSpeed = () => {
+    const newSpeed = animationSpeedInMS - 500;
+    if (newSpeed >= 500) {setAnimationSpeedInMS(newSpeed);}
+  }
+  const decreaseSpeed = () => {
+    const newSpeed = animationSpeedInMS + 500;
+    if (newSpeed <= 10000) {setAnimationSpeedInMS(newSpeed);}
+  }
+
+  const setExecutionTypeManual= () => setExecutionType('manual');
+  const setExecutionTypeAutomatic = () => setExecutionType('automatic');
+  const playAnimation = () => setIsAnimationPaused(false);
+  const pauseAnimation = () => setIsAnimationPaused(true);
+  const restartAnimation = () => {
+    pauseAnimation();
+    setIsAnimationRestarting(true);
   }
 
   return {
     array,
     setArray,
-    lockArrayInput,
     lockButtonInput,
     buttons,
-    restartAnimation,
+    selectedOptionName,
     selectBuildMinHeap,
     selectBuildMaxHeap,
     selectBuildMinHeapAndSort,
@@ -186,15 +231,24 @@ export const useProvideAnimation = () => {
     setCanvasWidth,
     canvasMinWidth,
     setCanvasMinWidth,
-    closeSideBar,
-    toggleSideBar,
-    executionType,
+    closeSideBarWindow,
+    toggleSideBarWindow,
+    closeExecutionLogWindow,
+    toggleExecutionLogWindow,
+    stepsToSolve,
     nextStepNumber,
-    incrementStep,
-    decrementStep,
-    setExecutionTypeManual,
-    setExecutionTypeAutomatic,
     treeInfo,
-    isAnimationRestarting
+    arrayInfo,
+    isAnimationRestarting,
+    animationSpeedInMS,
+    increaseSpeed,
+    decreaseSpeed,
+    incrementStepManually,
+    decrementStepManually,
+    isAnimationPaused,
+    playAnimation,
+    pauseAnimation,
+    setExecutionTypeAutomatic,
+    restartAnimation
   }
 };

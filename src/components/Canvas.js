@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faChevronLeft, faChevronRight, faRotateRight, faPlay, faPause
+  faRotateRight, faPlay, faPause,
+  faChevronLeft, faChevronRight, faChevronDown, faChevronUp,
+  faCaretUp, faCaretDown, faCaretLeft, faCaretRight
 } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Canvas.scss';
 import { useAnimation } from '../hooks';
@@ -9,61 +11,46 @@ import TreeNode from './TreeNode';
 
 export default function Canvas() {
   const CELL_SIZE = 30;
-  const canvasRef = useRef(null);
   const [grid, setGrid] = useState([[]]);
   const [isHeightApplied, setIsHeightApplied] = useState(false);
-  const [iseWidthApplied, setIsWidthApplied] = useState(false);
+  const [isWidthApplied, setIsWidthApplied] = useState(false);
+  const canvasRef = useRef(null);
+  const speedUpBtnRef = useRef(null);
+  const speedDownBtnRef = useRef(null);
+  const prevStepBtnRef = useRef(null);
+  const nextStepBtnRef = useRef(null);
   const {
-    treeInfo,
+    stepsToSolve, treeInfo, nextStepNumber,
     canvasHeight, setCanvasHeight, canvasMinHeight, setCanvasMinHeight,
     canvasWidth, setCanvasWidth, canvasMinWidth, setCanvasMinWidth,
     isAnimationRestarting, restartAnimation,
-    executionType, setExecutionTypeManual, setExecutionTypeAutomatic,
-    closeSideBar, toggleSideBar,
+    isAnimationPaused, playAnimation, pauseAnimation, setExecutionTypeAutomatic,
+    animationSpeedInMS, increaseSpeed, decreaseSpeed,
+    closeSideBarWindow, toggleSideBarWindow,
+    closeExecutionLogWindow, toggleExecutionLogWindow,
+    incrementStepManually, decrementStepManually
   } = useAnimation();
 
   useEffect(() => {
-    // make the square lines
-    const noOfLinesHeightWise = (canvasHeight/CELL_SIZE) + 1;
-    const noOfLinesWidthWise = (canvasWidth/CELL_SIZE) + 1;
-
-    // create the grid
-    const newGrid = Array.from({ length: noOfLinesHeightWise }, (row, i) =>
-      Array.from({ length: noOfLinesWidthWise }, (col, j) => `${i}-${j}`)
-    );
-
-    // set the grid
-    setGrid(newGrid);
-  }, [canvasHeight, canvasWidth]);
+    if (!isTreeEmpty()) {
+      // adjust the canvas minimum size
+      setCanvasMinHeight(treeInfo.level * 60);
+      setCanvasMinWidth(Math.pow(2, treeInfo.level - 1) * 90);
+    }
+  }, [treeInfo])
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(([{ contentRect }]) => {
       if (!isTreeEmpty()) {
         // adjust the canvas size
-        const canvasHeightRequired = (treeInfo.level * 30) + ((treeInfo.level - 1) * 30);
-        const noOfNodesInBottomLevel = Math.pow(2, treeInfo.level - 1);
-        const canvasWidthRequired = (noOfNodesInBottomLevel * 60) + ((noOfNodesInBottomLevel - 1) * 30);
+        const canvasHeightRequired = treeInfo.level * 60;
+        const canvasWidthRequired = Math.pow(2, treeInfo.level - 1) * 90;
 
-        if (contentRect.height > canvasHeightRequired) {
-          setCanvasHeight(contentRect.height);
-        }
-        if (contentRect.width > canvasWidthRequired) {
-          setCanvasWidth(contentRect.width);
-        }
+        if (contentRect.height > canvasHeightRequired){setCanvasHeight(contentRect.height);}
+        if (contentRect.width > canvasWidthRequired) {setCanvasWidth(contentRect.width);}
 
-        if (canvasMinHeight < canvasHeightRequired) {
-          setCanvasMinHeight(canvasHeightRequired);
-        }
-        if (canvasMinWidth < canvasWidthRequired) {
-          setCanvasMinWidth(canvasWidthRequired + 30);
-        }
-
-        if (canvasHeight < canvasHeightRequired) {
-          setCanvasHeight(canvasHeightRequired);
-        }
-        if (canvasWidth < canvasWidthRequired) {
-          setCanvasWidth(canvasWidthRequired);
-        }
+        if (canvasHeight < canvasHeightRequired) {setCanvasHeight(canvasHeightRequired);}
+        if (canvasWidth < canvasWidthRequired) {setCanvasWidth(canvasWidthRequired);}
 
         setIsHeightApplied(true);
         setIsWidthApplied(true);
@@ -72,7 +59,6 @@ export default function Canvas() {
         setCanvasWidth(contentRect.width);
       }
     });
-
     resizeObserver.observe(canvasRef.current);
 
     return () => {
@@ -84,87 +70,84 @@ export default function Canvas() {
     canvasMinWidth, setCanvasMinWidth, canvasWidth, setCanvasWidth
   ]);
 
-  const isTreeEmpty = () => {
-    return Object.keys(treeInfo).length === 0;
+  useEffect(() => {
+    // make the square lines
+    const noOfLinesHeightWise = Math.ceil(canvasHeight/CELL_SIZE);
+    const noOfLinesWidthWise = Math.ceil(canvasWidth/CELL_SIZE);
+
+    if (((grid.length !== noOfLinesHeightWise) ||
+      (grid[0].length !== noOfLinesWidthWise)) &&
+      (noOfLinesHeightWise > 0)
+    ) {
+      const newGrid = Array.from({ length: noOfLinesHeightWise },
+        () => Array.from({ length: noOfLinesWidthWise }, () => 1)
+      );
+
+      setGrid(newGrid);
+    }
+  }, [canvasHeight, canvasWidth]);
+
+  useEffect(() => {
+    if (!isTreeEmpty() && closeSideBarWindow) {
+      setCanvasMinWidth(canvasWidth + 300);
+      sleep(500).then(() => setCanvasMinWidth(canvasWidth - 300));
+    }
+  }, [closeSideBarWindow]);
+
+  useEffect(() => {
+    if (!isTreeEmpty() && closeExecutionLogWindow) {
+      setCanvasMinHeight(canvasHeight + 240);
+      sleep(500).then(() => setCanvasMinHeight(canvasHeight - 240));
+    }
+  }, [closeExecutionLogWindow]);
+
+  useEffect(() => {
+    if (!isTreeEmpty()) {
+      const handleKeyDown = (event) => {
+        switch (event.key) {
+          case 'ArrowUp':
+            speedUpBtnRef.current.click();
+            break;
+          case 'ArrowDown':
+            speedDownBtnRef.current.click();
+            break;
+          case 'ArrowLeft':
+            prevStepBtnRef.current.click();
+            break;
+          case 'ArrowRight':
+            nextStepBtnRef.current.click();
+            break;
+          default:
+            break;
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [treeInfo]);
+
+  const sleep = async (ms) => {
+    return await new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  const isTreeEmpty = () => {return Object.keys(treeInfo).length === 0;}
+
+  const handlePlayAnimation = () => {
+    setExecutionTypeAutomatic();
+    playAnimation();
+  }
+
+  const handleRestartAnimation = () => {
+    setExecutionTypeAutomatic();
+    restartAnimation();
   }
 
   return (
-    <div
-      className="canvas"
-      ref={canvasRef}
-    >
-      <div
-        className="sidebar-switch toggle-sidebar"
-        onClick={toggleSideBar}
-        style={{
-          animation: (closeSideBar
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          )
-        }}
-      >
-        {closeSideBar ? (
-          <FontAwesomeIcon
-            icon={faChevronRight}
-            className="icon"
-          />
-        ) : (
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            className="icon"
-          />
-        )}
-      </div>
-
-      <div
-        className="sidebar-switch restart-animation"
-        onClick={restartAnimation}
-        style={{
-          animation: (closeSideBar
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          )
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faRotateRight}
-          className="icon"
-          style={{
-            animation: (isAnimationRestarting
-              ? 'spin 1s linear infinite'
-              : ''
-            )
-          }}
-        />
-      </div>
-
-      <div
-        className="sidebar-switch toggle-animation-status"
-        onClick={(executionType === 'automatic')
-          ? setExecutionTypeManual
-          : setExecutionTypeAutomatic
-        }
-        style={{
-          animation: (closeSideBar
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          ),
-          visibility: (!isTreeEmpty() ? 'visible': 'hidden')
-        }}
-      >
-        {(executionType === 'automatic') ? (
-          <FontAwesomeIcon
-            icon={faPause}
-            className="icon"
-          />
-        ) : (
-          <FontAwesomeIcon
-            icon={faPlay}
-            className="icon"
-          />
-        )}
-      </div>
-
+    <div className="canvas" ref={canvasRef}>
       {grid.map((row, i) => (
         <div
           key={`grid-${i}`}
@@ -193,20 +176,149 @@ export default function Canvas() {
         style={{
           minHeight: (!isTreeEmpty()
             ? (canvasMinHeight ? canvasMinHeight : '')
-            : '100%'
+            : 'unset'
           ),
           minWidth: (!isTreeEmpty()
             ? (canvasMinWidth ? canvasMinWidth : '')
-            : 700
+            : 'unset'
           ),
           height: (grid.length * CELL_SIZE),
           width: (grid[0].length * CELL_SIZE)
         }}
       >
-        {!isTreeEmpty() && isHeightApplied && iseWidthApplied && (
+        {!isTreeEmpty() && isHeightApplied && isWidthApplied && (
           <TreeNode nodeData={treeInfo} />
         )}
       </div>
+
+      {/*switches*/}
+      <div
+        className="switch sidebar-switch toggle-sidebar"
+        onClick={toggleSideBarWindow}
+        style={{
+          animation: (closeSideBarWindow
+            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
+          )
+        }}
+      >
+        {closeSideBarWindow ? (
+          <FontAwesomeIcon icon={faChevronRight} className="icon" />
+        ) : (
+          <FontAwesomeIcon icon={faChevronLeft} className="icon" />
+        )}
+      </div>
+
+      <div
+        className="switch sidebar-switch restart-animation"
+        onClick={handleRestartAnimation}
+        style={{
+          animation: (closeSideBarWindow
+            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
+          )
+        }}
+      >
+        <FontAwesomeIcon
+          icon={faRotateRight}
+          className="icon"
+          style={{
+            color: (isAnimationRestarting ? 'tomato': ''),
+            animation: (isAnimationRestarting ? 'spin 1s linear infinite' : '')
+          }}
+        />
+      </div>
+
+      <div
+        className="switch sidebar-switch toggle-animation-status"
+        onClick={isAnimationPaused ? handlePlayAnimation : pauseAnimation}
+        style={{
+          animation: (closeSideBarWindow
+            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
+          ),
+          visibility: (!isTreeEmpty() ? 'visible': 'hidden')
+        }}
+      >
+        {isAnimationPaused ? (
+          <FontAwesomeIcon icon={faPlay} className="icon" />
+        ) : (
+          <FontAwesomeIcon icon={faPause} className="icon" />
+        )}
+      </div>
+
+      {!isTreeEmpty() && (
+        <div
+          className="switch execution-log-switch"
+          onClick={toggleExecutionLogWindow}
+          style={{
+            animation: (closeExecutionLogWindow
+              ? 'toggleExecutionLogIconSlideDown 0.5s ease-in-out forwards'
+              : 'toggleExecutionLogIconSlideUp 0.5s ease-in-out forwards'
+            )
+          }}
+        >
+          {closeExecutionLogWindow ? (
+            <FontAwesomeIcon icon={faChevronUp} className="icon" />
+          ) : (
+            <FontAwesomeIcon icon={faChevronDown} className="icon" />
+          )}
+        </div>
+      )}
+
+      {!isTreeEmpty() && (
+        <div className="canvas-operation">
+          <div className="btn-container">
+            <div className="stat speed-stat">
+              <p>STEP</p>
+              <h3>{nextStepNumber}/{stepsToSolve.length - 1}</h3>
+            </div>
+
+            <button
+              className="vertical-btn"
+              ref={speedUpBtnRef}
+              onClick={increaseSpeed}
+            >
+              <FontAwesomeIcon icon={faCaretUp} className="icon" />
+              <p>SPEED</p>
+            </button>
+
+            <div className="stat speed-stat">
+              <p>SPEED</p>
+              <h3>{(100 - (animationSpeedInMS - 500)/100)}%</h3>
+            </div>
+          </div>
+
+          <div className="btn-container">
+            <button
+              className="horizontal-btn"
+              ref={prevStepBtnRef}
+              onClick={decrementStepManually}
+            >
+              <FontAwesomeIcon icon={faCaretLeft} className="icon" />
+              <p>STEP</p>
+            </button>
+
+            <button
+              className="vertical-btn"
+              ref={speedDownBtnRef}
+              onClick={decreaseSpeed}
+            >
+              <p>SPEED</p>
+              <FontAwesomeIcon icon={faCaretDown} className="icon" />
+            </button>
+
+            <button
+              className="horizontal-btn"
+              ref={nextStepBtnRef}
+              onClick={incrementStepManually}
+            >
+              <p>STEP</p>
+              <FontAwesomeIcon icon={faCaretRight} className="icon" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import '../styles/TreeNode.scss';
+import { useAnimation } from '../hooks';
 
 export default function TreeNode(props) {
   const { nodeData } = props;
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
+  const { animationSpeedInMS } = useAnimation();
 
   useEffect(() => {
     setHeight((nodeData.level * 30) + ((nodeData.level - 1) * 30));
@@ -28,14 +30,14 @@ export default function TreeNode(props) {
         width: (width ? width : 'unset'),
       }}
     >
-      {nodeData.value && (
+      {nodeData.value !== null && (
         <>
           <div className="tree-node-container">
             <div
               className="left-arrow"
               style={{
                 width: (calculateLineWidth(nodeData.level)),
-                visibility: (nodeData.left.value ? 'visible' : 'hidden')
+                visibility: (nodeData.left.value !== null ? 'visible' : 'hidden')
               }}
             >
               <FontAwesomeIcon icon={faChevronDown} className="icon" />
@@ -53,7 +55,7 @@ export default function TreeNode(props) {
                       : 'none'
                     ),
                     transition: (nodeData.transitionCoordinates
-                      ? 'transform 1.5s ease-in-out'
+                      ? `transform ${animationSpeedInMS}ms ease-in-out`
                       : 'none'
                     ),
                     border: (nodeData.transitionCoordinates ? 'solid 1px white' : 'none'),
@@ -68,12 +70,12 @@ export default function TreeNode(props) {
               <div className="middle-arrows">
                 <div
                   className="middle-left-arrow"
-                  style={{ visibility: (nodeData.left.value ? 'visible' : 'hidden') }}
+                  style={{ visibility: (nodeData.left.value !== null ? 'visible' : 'hidden') }}
                 ></div>
 
                 <div
                   className="middle-right-arrow"
-                  style={{ visibility: (nodeData.right.value ? 'visible' : 'hidden') }}
+                  style={{ visibility: (nodeData.right.value !== null ? 'visible' : 'hidden') }}
                 ></div>
               </div>
             </div>
@@ -82,7 +84,7 @@ export default function TreeNode(props) {
               className="right-arrow"
               style={{
                 width: (calculateLineWidth(nodeData.level)),
-                visibility: (nodeData.right.value ? 'visible' : 'hidden')
+                visibility: (nodeData.right.value !== null ? 'visible' : 'hidden')
               }}
             >
               <FontAwesomeIcon icon={faChevronDown} className="icon" />

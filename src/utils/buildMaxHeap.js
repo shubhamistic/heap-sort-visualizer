@@ -17,7 +17,10 @@ export function maxHeapify(array, arrayLength, index, stepsToSolve){
 
     stepsToSolve.push({
       array: [...array],
-      swap: [index, largest]
+      swap: [index, largest],
+      currentIndex: index,
+      leftChildIndex: (left < arrayLength) ? left : -1,
+      rightChildIndex: (right < arrayLength) ? right : -1
     });
 
     maxHeapify(array, arrayLength, largest, stepsToSolve);

@@ -17,7 +17,10 @@ export function minHeapify(array, arrayLength, index, stepsToSolve){
 
     stepsToSolve.push({
       array: [...array],
-      swap: [index, smallest]
+      swap: [index, smallest],
+      currentIndex: index,
+      leftChildIndex: (left < arrayLength) ? left : -1,
+      rightChildIndex: (right < arrayLength) ? right : -1
     });
 
     minHeapify(array, arrayLength, smallest, stepsToSolve);

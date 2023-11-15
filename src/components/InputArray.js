@@ -5,10 +5,10 @@ import '../styles/InputArray.scss';
 import { useAnimation } from '../hooks';
 
 export default function InputArray() {
-  const {array, setArray, lockArrayInput} = useAnimation();
   const [showAddInputButtons, setShowAddInputButtons] = useState([]);
-  const inputRefs = useRef([]);
   const [focusInputBoxIndex, setFocusInputBoxIndex] = useState(-1);
+  const inputRefs = useRef([]);
+  const {array, setArray} = useAnimation();
 
   useEffect(() => {
     const initializedArray = new Array(63).fill(false);
@@ -85,12 +85,7 @@ export default function InputArray() {
   }
 
   return (
-    <div
-      className="input-array"
-      style={{
-        pointerEvents: (lockArrayInput ? 'none' : 'auto')
-      }}
-    >
+    <div className="input-array">
       {array.map((element, elementIndex) => (
         <div
           key={elementIndex}
