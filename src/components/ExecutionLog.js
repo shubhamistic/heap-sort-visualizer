@@ -13,6 +13,7 @@ export default function ExecutionLog() {
   const [rightChildIndexDistance, setRightChildIndexDistance] = useState(0);
   const [swapElementsLineDistance, setSwapElementsLineDistance] = useState(0);
   const [swapElementsLineWidth, setSwapElementsLineWidth] = useState(0);
+  const [sortedUpToIndex, setSortedUpToIndex] = useState(undefined);
   const { arrayInfo, closeExecutionLogWindow, selectedOptionName } = useAnimation();
 
   useEffect(() => {
@@ -32,6 +33,9 @@ export default function ExecutionLog() {
       if (arrayInfo.swap) {
         setSwapElementsLineDistance(((arrayInfo.swap[0] + 1) * 51) + 25)
         setSwapElementsLineWidth((arrayInfo.swap[1] - arrayInfo.swap[0]) * 51);
+      }
+      if (arrayInfo.highlightStartingFromIndex >= 0) {
+        setSortedUpToIndex(arrayInfo.highlightStartingFromIndex);
       }
     }
   }, [arrayInfo]);
@@ -102,11 +106,15 @@ export default function ExecutionLog() {
                 </h3>
                 <p
                   style={{
-                    background: (arrayInfo.swap
+                    backgroundColor: (arrayInfo.swap
                       ? ((arrayInfo.swap[0] === elementIndex ||
-                        arrayInfo.swap[1] === elementIndex) ? 'goldenrod' : ''
-                      )
-                      : ''
+                        arrayInfo.swap[1] === elementIndex)
+                          ? 'goldenrod'
+                          : (elementIndex >= sortedUpToIndex)
+                            ? 'mediumseagreen' : ''
+                        )
+                      : (elementIndex >= sortedUpToIndex)
+                        ? 'mediumseagreen' : ''
                     )
                   }}
                 >

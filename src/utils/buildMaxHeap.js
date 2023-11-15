@@ -29,7 +29,8 @@ export function maxHeapify(array, arrayLength, index, stepsToSolve){
 
 export function buildMaxHeap(array){
   let stepsToSolve = [{
-    array: [...array]
+    array: [...array],
+    highlightStartingFromIndex: array.length
   }];
 
   for(let i = Math.floor(array.length/2) - 1 ; i >= 0 ; i--){

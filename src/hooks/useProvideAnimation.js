@@ -109,7 +109,10 @@ export const useProvideAnimation = () => {
       const resultTree = createHeapTree(stepsToSolve[stepNumber].array);
       setTreeInfo(resultTree);
       if (nextStepNumber === stepsToSolve.length - 1) {
-        setArrayInfo({ array: stepsToSolve[nextStepNumber].array });
+        setArrayInfo({
+          array: stepsToSolve[nextStepNumber].array,
+          highlightStartingFromIndex: 0
+        });
       }
       await sleep(500);
     }

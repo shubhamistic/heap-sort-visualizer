@@ -8,7 +8,8 @@ function buildMinHeapAndSortHelper(array, stepsToSolve) {
 
     stepsToSolve.push({
       array: [...array],
-      swap: [0, i]
+      swap: [0, i],
+      highlightStartingFromIndex: i
     });
 
     minHeapify(array, i, 0, stepsToSolve);

@@ -8,7 +8,8 @@ function buildMaxHeapAndSortHelper(array, stepsToSolve) {
 
     stepsToSolve.push({
       array: [...array],
-      swap: [0, i]
+      swap: [0, i],
+      highlightStartingFromIndex: i
     });
 
     maxHeapify(array, i, 0, stepsToSolve);
