@@ -164,6 +164,13 @@ export default function ExecutionLog() {
             </div>
           )}
         </div>
+
+        {/*Execution-Log-Info*/}
+        <div className="execution-log-info">
+          {arrayInfo.info && (
+            <p>ⓘ&nbsp;{arrayInfo.info}</p>
+          )}
+        </div>
       </div>
     </div>
   );

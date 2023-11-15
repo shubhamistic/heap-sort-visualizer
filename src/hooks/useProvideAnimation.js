@@ -111,13 +111,26 @@ export const useProvideAnimation = () => {
       if (nextStepNumber === stepsToSolve.length - 1) {
         setArrayInfo({
           array: stepsToSolve[nextStepNumber].array,
-          highlightStartingFromIndex: 0
+          highlightStartingFromIndex: 0,
+          info: getFinalInfo(buttons)
         });
       }
       await sleep(500);
     }
 
     setIsAnimationRunning(false);
+  }
+
+  const getFinalInfo = (options) => {
+    if (options.buildMinHeap) {
+      return 'Min Heap Built.';
+    } else if (options.buildMaxHeap) {
+      return 'Max Heap Built.';
+    } else if (options.buildMinHeapAndSort) {
+      return 'Array is sorted into descending order.';
+    } else if (options.buildMaxHeapAndSort) {
+      return 'Array is sorted into ascending order.';
+    }
   }
 
   const selectBuildMinHeap = () => {
