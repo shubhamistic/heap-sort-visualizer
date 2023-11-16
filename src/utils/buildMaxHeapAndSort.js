@@ -22,5 +22,11 @@ export function buildMaxHeapAndSort(array){
 
   buildMaxHeapAndSortHelper(array, stepsToSolve);
 
+  stepsToSolve.push({
+    array: [...array],
+    highlightStartingFromIndex: 0,
+    info: 'Array is sorted into ascending order.'
+  });
+
   return stepsToSolve;
 }

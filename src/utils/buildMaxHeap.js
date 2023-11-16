@@ -53,5 +53,11 @@ export function buildMaxHeap(array){
     maxHeapify(array, array.length, i, stepsToSolve);
   }
 
+  stepsToSolve.push({
+    array: [...array],
+    highlightStartingFromIndex: 0,
+    info: 'Max Heap Built.'
+  });
+
   return stepsToSolve;
 }

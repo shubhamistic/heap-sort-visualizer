@@ -92,45 +92,26 @@ export const useProvideAnimation = () => {
     setIsAnimationRunning(true);
 
     if (stepNumber === 0) {
-      const initialTree = createHeapTree(stepsToSolve[0].array);
-      setTreeInfo(initialTree);
+      setTreeInfo(createHeapTree(stepsToSolve[0].array));
       setArrayInfo(stepsToSolve[stepNumber]);
       await sleep(1000);
     }
     else {
-      const transitionTree = createHeapTree(stepsToSolve[stepNumber - 1].array, stepsToSolve[stepNumber].swap);
-      setTreeInfo(transitionTree);
+      setTreeInfo(createHeapTree(stepsToSolve[stepNumber - 1].array, stepsToSolve[stepNumber].swap));
       setArrayInfo({
         ...stepsToSolve[stepNumber],
         array: stepsToSolve[stepNumber - 1].array
       });
       await sleep(animationSpeedInMS);
 
-      const resultTree = createHeapTree(stepsToSolve[stepNumber].array);
-      setTreeInfo(resultTree);
+      setTreeInfo(createHeapTree(stepsToSolve[stepNumber].array));
       if (nextStepNumber === stepsToSolve.length - 1) {
-        setArrayInfo({
-          array: stepsToSolve[nextStepNumber].array,
-          highlightStartingFromIndex: 0,
-          info: getFinalInfo(buttons)
-        });
+        setArrayInfo(stepsToSolve[stepNumber]);
       }
       await sleep(500);
     }
 
     setIsAnimationRunning(false);
-  }
-
-  const getFinalInfo = (options) => {
-    if (options.buildMinHeap) {
-      return 'Min Heap Built.';
-    } else if (options.buildMaxHeap) {
-      return 'Max Heap Built.';
-    } else if (options.buildMinHeapAndSort) {
-      return 'Array is sorted into descending order.';
-    } else if (options.buildMaxHeapAndSort) {
-      return 'Array is sorted into ascending order.';
-    }
   }
 
   const selectBuildMinHeap = () => {

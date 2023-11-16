@@ -22,5 +22,11 @@ export function buildMinHeapAndSort(array){
 
   buildMinHeapAndSortHelper(array, stepsToSolve);
 
+  stepsToSolve.push({
+    array: [...array],
+    highlightStartingFromIndex: 0,
+    info: 'Array is sorted into descending order.'
+  });
+
   return stepsToSolve;
 }

@@ -53,5 +53,11 @@ export function buildMinHeap(array){
     minHeapify(array, array.length, i, stepsToSolve);
   }
 
+  stepsToSolve.push({
+    array: [...array],
+    highlightStartingFromIndex: 0,
+    info: 'Min Heap Built.'
+  });
+
   return stepsToSolve;
 }
