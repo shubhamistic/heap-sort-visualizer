@@ -1,9 +1,6 @@
-* {box-sizing: border-box;}
-
 .canvas {
   position: relative;
   height: 100%;
-  min-width: 700px;
   width: 100%;
   overflow: auto;
 
@@ -73,7 +70,7 @@
   }
 
   .canvas-operation {
-    position: fixed;
+    position: absolute;
     right: 15px;
     top: 15px;
     height: 75px;
@@ -140,3 +137,15 @@
 @keyframes toggleExecutionLogIconSlideUp { from {bottom: 0;} }
 @keyframes toggleExecutionLogIconSlideDown { to {bottom: 0;} }
 @keyframes spin { to {transform: rotate(360deg);} }
+
+
+@media screen and (max-width: 1000px) {
+  .canvas {
+    .canvas-operation {
+      position: absolute;
+      top: 15px;
+      right: unset;
+      left: 50px;
+    }
+  }
+}
