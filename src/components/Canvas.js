@@ -216,7 +216,8 @@ export default function Canvas() {
           animation: (closeSideBarWindow
             ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
             : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          )
+          ),
+          visibility: (!isTreeEmpty() ? 'visible': 'hidden')
         }}
       >
         <FontAwesomeIcon
