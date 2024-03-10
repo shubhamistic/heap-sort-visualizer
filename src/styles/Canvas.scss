@@ -71,8 +71,8 @@
 
   .canvas-operation {
     position: absolute;
-    right: 15px;
     top: 15px;
+    right: 15px;
     height: 75px;
     width: 160px;
     display: flex;
@@ -132,6 +132,7 @@
   }
 }
 
+
 @keyframes toggleSideBarIconSlideRight { from {left: 0;} }
 @keyframes toggleSideBarIconSlideLeft { to {left: 0;} }
 @keyframes toggleExecutionLogIconSlideUp { from {bottom: 0;} }
@@ -139,11 +140,19 @@
 @keyframes spin { to {transform: rotate(360deg);} }
 
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 335px) {
+  .canvas {
+    .execution-log-switch {
+      border-left: none;
+      right: unset;
+      left: 300px;
+    }
+  }
+}
+
+@media screen and (max-width: 525px) {
   .canvas {
     .canvas-operation {
-      position: absolute;
-      top: 15px;
       right: unset;
       left: 50px;
     }
