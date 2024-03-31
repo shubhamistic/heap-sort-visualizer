@@ -44,7 +44,7 @@ export default function Sidebar() {
           pointerEvents: (lockButtonInput ? 'none' : 'auto')
         }}
       >
-        <p className="p-head">Heap Operations:</p>
+        <h1 className="p-head">Heap Operations:</h1>
 
         <button
           className="hbi-btn"
