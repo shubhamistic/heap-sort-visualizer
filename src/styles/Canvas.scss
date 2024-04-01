@@ -70,7 +70,7 @@
   }
 
   .canvas-operation {
-    position: absolute;
+    position: fixed;
     top: 15px;
     right: 15px;
     height: 75px;
@@ -141,20 +141,9 @@
 
 
 @media screen and (max-width: 335px) {
-  .canvas {
-    .execution-log-switch {
-      border-left: none;
-      right: unset;
-      left: 300px;
-    }
-  }
-}
-
-@media screen and (max-width: 525px) {
-  .canvas {
-    .canvas-operation {
-      right: unset;
-      left: 50px;
-    }
+  .canvas .execution-log-switch {
+    border-left: none;
+    right: unset;
+    left: 300px;
   }
 }

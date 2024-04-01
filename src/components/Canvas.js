@@ -72,8 +72,8 @@ export default function Canvas() {
 
   useEffect(() => {
     // make the square lines
-    const noOfLinesHeightWise = Math.ceil(canvasHeight/CELL_SIZE);
-    const noOfLinesWidthWise = Math.ceil(canvasWidth/CELL_SIZE);
+    const noOfLinesHeightWise = Math.floor(canvasHeight/CELL_SIZE);
+    const noOfLinesWidthWise = Math.floor(canvasWidth/CELL_SIZE);
 
     if (((grid.length !== noOfLinesHeightWise) ||
       (grid[0].length !== noOfLinesWidthWise)) &&

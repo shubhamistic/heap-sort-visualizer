@@ -30,6 +30,8 @@ export default function Sidebar() {
         )
       }}
     >
+      <h1 className="main-head">HeapSortVisualizer();</h1>
+
       <div className="handle-array-input">
         <p className="p-head">Input Array:</p>
         <p className="p-info">{instructions.i1}</p>
