@@ -5,6 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../styles/ExecutionLog.scss';
 import { useAnimation } from '../hooks';
+import CustomScrollbar from './CustomScrollbar';
 
 export default function ExecutionLog() {
   const [arrayContainerWidth, setArrayContainerWidth] = useState(0);
@@ -53,124 +54,126 @@ export default function ExecutionLog() {
       }}
     >
       <div className="execution-log-container">
-        {/*Operation-Name*/}
-        <div className="operation-name">
-          <h2>{selectedOptionName}</h2>
-        </div>
+        <CustomScrollbar>
+          {/*Operation-Name*/}
+          <div className="operation-name">
+            <h2>{selectedOptionName}</h2>
+          </div>
 
-        {/*Swap-Line*/}
-        <div
-          className="swap-line"
-          style={{ width: arrayContainerWidth }}
-        >
-          {arrayInfo.swap && (
-            <div
-              className="swap-line-container"
-              style={{
-                left: swapElementsLineDistance,
-                width: swapElementsLineWidth
-              }}
-            >
-              <p>SWAPPING</p>
-              <div className="line"></div>
-            </div>
-          )}
-        </div>
-
-        {/*Array*/}
-        {isArrayInfoEmpty && (
+          {/*Swap-Line*/}
           <div
-            className="el-array"
+            className="swap-line"
             style={{ width: arrayContainerWidth }}
           >
-            <div className="el-array-element">
-              <h3>Index</h3>
-              <p>--></p>
-            </div>
-            {arrayInfo.array.map((element, elementIndex) => (
+            {arrayInfo.swap && (
               <div
-                className="el-array-element"
-                key={`el-array-element-${elementIndex}`}
+                className="swap-line-container"
+                style={{
+                  left: swapElementsLineDistance,
+                  width: swapElementsLineWidth
+                }}
               >
-                <h3
-                  style={{
-                    background: (arrayInfo.swap
-                      ? ((arrayInfo.swap[0] === elementIndex ||
-                        arrayInfo.swap[1] === elementIndex) ? 'gray' : ''
-                      )
-                      : ''
-                    )
-                  }}
-                >
-                  {elementIndex}
-                </h3>
-                <p
-                  style={{
-                    backgroundColor: (arrayInfo.swap
-                      ? ((arrayInfo.swap[0] === elementIndex ||
-                        arrayInfo.swap[1] === elementIndex)
-                          ? 'goldenrod'
-                          : (elementIndex >= sortedUpToIndex)
-                            ? 'mediumseagreen' : ''
-                        )
-                      : (elementIndex >= sortedUpToIndex)
-                        ? 'mediumseagreen' : ''
-                    )
-                  }}
-                >
-                  {element}
-                </p>
+                <p>SWAPPING</p>
+                <div className="line"></div>
               </div>
-            ))}
+            )}
           </div>
-        )}
 
-        {/*Index-Pointers*/}
-        <div
-          className="index-pointers"
-          style={{ width: arrayContainerWidth }}
-        >
-          {(arrayInfo.currentIndex >= 0) && (
+          {/*Array*/}
+          {isArrayInfoEmpty && (
             <div
-              className="index-pointers-container current-index"
-              style={{ left: currentIndexDistance }}
+              className="el-array"
+              style={{ width: arrayContainerWidth }}
             >
-              <div className="arrow-up-icon">
-                <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
+              <div className="el-array-element">
+                <h3>Index</h3>
+                <p>--></p>
               </div>
-              <p>CURRENT INDEX</p>
+              {arrayInfo.array.map((element, elementIndex) => (
+                <div
+                  className="el-array-element"
+                  key={`el-array-element-${elementIndex}`}
+                >
+                  <h3
+                    style={{
+                      background: (arrayInfo.swap
+                        ? ((arrayInfo.swap[0] === elementIndex ||
+                          arrayInfo.swap[1] === elementIndex) ? 'gray' : ''
+                        )
+                        : ''
+                      )
+                    }}
+                  >
+                    {elementIndex}
+                  </h3>
+                  <p
+                    style={{
+                      backgroundColor: (arrayInfo.swap
+                        ? ((arrayInfo.swap[0] === elementIndex ||
+                          arrayInfo.swap[1] === elementIndex)
+                            ? 'goldenrod'
+                            : (elementIndex >= sortedUpToIndex)
+                              ? 'mediumseagreen' : ''
+                          )
+                        : (elementIndex >= sortedUpToIndex)
+                          ? 'mediumseagreen' : ''
+                      )
+                    }}
+                  >
+                    {element}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
-          {(arrayInfo.leftChildIndex >= 0) && (
-            <div
-              className="index-pointers-container left-child"
-              style={{ left: leftChildIndexDistance }}
-            >
-              <div className="arrow-up-icon">
-                <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
-              </div>
-              <p>LEFT CHILD</p>
-            </div>
-          )}
-          {(arrayInfo.rightChildIndex >= 0) && (
-            <div
-              className="index-pointers-container right-child"
-              style={{ left: rightChildIndexDistance }}
-            >
-              <div className="arrow-up-icon ">
-                <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
-              </div>
-              <p>RIGHT CHILD</p>
-            </div>
-          )}
-        </div>
 
-        {/*Execution-Log-Info*/}
-        <div className="execution-log-info">
-          {arrayInfo.info && (
-            <p>ⓘ&nbsp;{arrayInfo.info}</p>
-          )}
-        </div>
+          {/*Index-Pointers*/}
+          <div
+            className="index-pointers"
+            style={{ width: arrayContainerWidth }}
+          >
+            {(arrayInfo.currentIndex >= 0) && (
+              <div
+                className="index-pointers-container current-index"
+                style={{ left: currentIndexDistance }}
+              >
+                <div className="arrow-up-icon">
+                  <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
+                </div>
+                <p>CURRENT INDEX</p>
+              </div>
+            )}
+            {(arrayInfo.leftChildIndex >= 0) && (
+              <div
+                className="index-pointers-container left-child"
+                style={{ left: leftChildIndexDistance }}
+              >
+                <div className="arrow-up-icon">
+                  <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
+                </div>
+                <p>LEFT CHILD</p>
+              </div>
+            )}
+            {(arrayInfo.rightChildIndex >= 0) && (
+              <div
+                className="index-pointers-container right-child"
+                style={{ left: rightChildIndexDistance }}
+              >
+                <div className="arrow-up-icon ">
+                  <FontAwesomeIcon icon={faArrowUpLong} className="icon"/>
+                </div>
+                <p>RIGHT CHILD</p>
+              </div>
+            )}
+          </div>
+
+          {/*Execution-Log-Info*/}
+          <div className="execution-log-info">
+            {arrayInfo.info && (
+              <p>ⓘ&nbsp;{arrayInfo.info}</p>
+            )}
+          </div>
+        </CustomScrollbar>
       </div>
     </div>
   );

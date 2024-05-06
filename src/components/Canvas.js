@@ -8,6 +8,7 @@ import {
 import '../styles/Canvas.scss';
 import { useAnimation } from '../hooks';
 import TreeNode from './TreeNode';
+import CustomScrollbar from './CustomScrollbar';
 
 export default function Canvas() {
   const CELL_SIZE = 30;
@@ -72,8 +73,8 @@ export default function Canvas() {
 
   useEffect(() => {
     // make the square lines
-    const noOfLinesHeightWise = Math.floor(canvasHeight/CELL_SIZE);
-    const noOfLinesWidthWise = Math.floor(canvasWidth/CELL_SIZE);
+    const noOfLinesHeightWise = Math.ceil(canvasHeight/CELL_SIZE);
+    const noOfLinesWidthWise = Math.ceil(canvasWidth/CELL_SIZE);
 
     if (((grid.length !== noOfLinesHeightWise) ||
       (grid[0].length !== noOfLinesWidthWise)) &&
@@ -148,178 +149,180 @@ export default function Canvas() {
 
   return (
     <div className="canvas" ref={canvasRef}>
-      {grid.map((row, i) => (
+      <CustomScrollbar>
+        {grid.map((row, i) => (
+          <div
+            key={`grid-${i}`}
+            className="row"
+            style={{
+              minHeight: CELL_SIZE,
+              height: CELL_SIZE,
+              width: (grid[0].length * CELL_SIZE)
+            }}
+          >
+            {row.map((cell, j) => (
+              <div
+                key={`grid-${i}-${j}`}
+                className="cell"
+                style={{
+                  minWidth: CELL_SIZE,
+                  width: CELL_SIZE
+                }}
+              ></div>
+            ))}
+          </div>
+        ))}
+
         <div
-          key={`grid-${i}`}
-          className="row"
+          className="canvas-draw"
           style={{
-            minHeight: CELL_SIZE,
-            height: CELL_SIZE,
+            minHeight: (!isTreeEmpty()
+              ? (canvasMinHeight ? canvasMinHeight : '')
+              : 'unset'
+            ),
+            minWidth: (!isTreeEmpty()
+              ? (canvasMinWidth ? canvasMinWidth : '')
+              : 'unset'
+            ),
+            height: (grid.length * CELL_SIZE),
             width: (grid[0].length * CELL_SIZE)
           }}
         >
-          {row.map((cell, j) => (
-            <div
-              key={`grid-${i}-${j}`}
-              className="cell"
-              style={{
-                minWidth: CELL_SIZE,
-                width: CELL_SIZE
-              }}
-            ></div>
-          ))}
+          {!isTreeEmpty() && isHeightApplied && isWidthApplied && (
+            <TreeNode nodeData={treeInfo} />
+          )}
         </div>
-      ))}
 
-      <div
-        className="canvas-draw"
-        style={{
-          minHeight: (!isTreeEmpty()
-            ? (canvasMinHeight ? canvasMinHeight : '')
-            : 'unset'
-          ),
-          minWidth: (!isTreeEmpty()
-            ? (canvasMinWidth ? canvasMinWidth : '')
-            : 'unset'
-          ),
-          height: (grid.length * CELL_SIZE),
-          width: (grid[0].length * CELL_SIZE)
-        }}
-      >
-        {!isTreeEmpty() && isHeightApplied && isWidthApplied && (
-          <TreeNode nodeData={treeInfo} />
-        )}
-      </div>
-
-      {/*switches*/}
-      <div
-        className="switch sidebar-switch toggle-sidebar"
-        onClick={toggleSideBarWindow}
-        style={{
-          animation: (closeSideBarWindow
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          )
-        }}
-      >
-        {closeSideBarWindow ? (
-          <FontAwesomeIcon icon={faChevronRight} className="icon" />
-        ) : (
-          <FontAwesomeIcon icon={faChevronLeft} className="icon" />
-        )}
-      </div>
-
-      <div
-        className="switch sidebar-switch restart-animation"
-        onClick={handleRestartAnimation}
-        style={{
-          animation: (closeSideBarWindow
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          ),
-          visibility: (!isTreeEmpty() ? 'visible': 'hidden')
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faRotateRight}
-          className="icon"
-          style={{
-            color: (isAnimationRestarting ? 'tomato': ''),
-            animation: (isAnimationRestarting ? 'spin 1s linear infinite' : '')
-          }}
-        />
-      </div>
-
-      <div
-        className="switch sidebar-switch toggle-animation-status"
-        onClick={isAnimationPaused ? handlePlayAnimation : pauseAnimation}
-        style={{
-          animation: (closeSideBarWindow
-            ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
-            : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
-          ),
-          visibility: (!isTreeEmpty() ? 'visible': 'hidden')
-        }}
-      >
-        {isAnimationPaused ? (
-          <FontAwesomeIcon icon={faPlay} className="icon" />
-        ) : (
-          <FontAwesomeIcon icon={faPause} className="icon" />
-        )}
-      </div>
-
-      {!isTreeEmpty() && (
+        {/*switches*/}
         <div
-          className="switch execution-log-switch"
-          onClick={toggleExecutionLogWindow}
+          className="switch sidebar-switch toggle-sidebar"
+          onClick={toggleSideBarWindow}
           style={{
-            animation: (closeExecutionLogWindow
-              ? 'toggleExecutionLogIconSlideDown 0.5s ease-in-out forwards'
-              : 'toggleExecutionLogIconSlideUp 0.5s ease-in-out forwards'
+            animation: (closeSideBarWindow
+              ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+              : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
             )
           }}
         >
-          {closeExecutionLogWindow ? (
-            <FontAwesomeIcon icon={faChevronUp} className="icon" />
+          {closeSideBarWindow ? (
+            <FontAwesomeIcon icon={faChevronRight} className="icon" />
           ) : (
-            <FontAwesomeIcon icon={faChevronDown} className="icon" />
+            <FontAwesomeIcon icon={faChevronLeft} className="icon" />
           )}
         </div>
-      )}
 
-      {!isTreeEmpty() && (
-        <div className="canvas-operation">
-          <div className="btn-container">
-            <div className="stat speed-stat">
-              <p>STEP</p>
-              <h3>{nextStepNumber}/{stepsToSolve.length - 1}</h3>
-            </div>
-
-            <button
-              className="vertical-btn"
-              ref={speedUpBtnRef}
-              onClick={increaseSpeed}
-            >
-              <FontAwesomeIcon icon={faCaretUp} className="icon" />
-              <p>SPEED</p>
-            </button>
-
-            <div className="stat speed-stat">
-              <p>SPEED</p>
-              <h3>{(100 - (animationSpeedInMS - 500)/100)}%</h3>
-            </div>
-          </div>
-
-          <div className="btn-container">
-            <button
-              className="horizontal-btn"
-              ref={prevStepBtnRef}
-              onClick={decrementStepManually}
-            >
-              <FontAwesomeIcon icon={faCaretLeft} className="icon" />
-              <p>STEP</p>
-            </button>
-
-            <button
-              className="vertical-btn"
-              ref={speedDownBtnRef}
-              onClick={decreaseSpeed}
-            >
-              <p>SPEED</p>
-              <FontAwesomeIcon icon={faCaretDown} className="icon" />
-            </button>
-
-            <button
-              className="horizontal-btn"
-              ref={nextStepBtnRef}
-              onClick={incrementStepManually}
-            >
-              <p>STEP</p>
-              <FontAwesomeIcon icon={faCaretRight} className="icon" />
-            </button>
-          </div>
+        <div
+          className="switch sidebar-switch restart-animation"
+          onClick={handleRestartAnimation}
+          style={{
+            animation: (closeSideBarWindow
+              ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+              : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
+            ),
+            visibility: (!isTreeEmpty() ? 'visible': 'hidden')
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faRotateRight}
+            className="icon"
+            style={{
+              color: (isAnimationRestarting ? 'tomato': ''),
+              animation: (isAnimationRestarting ? 'spin 1s linear infinite' : '')
+            }}
+          />
         </div>
-      )}
+
+        <div
+          className="switch sidebar-switch toggle-animation-status"
+          onClick={isAnimationPaused ? handlePlayAnimation : pauseAnimation}
+          style={{
+            animation: (closeSideBarWindow
+              ? 'toggleSideBarIconSlideLeft 0.5s ease-in-out forwards'
+              : 'toggleSideBarIconSlideRight 0.5s ease-in-out forwards'
+            ),
+            visibility: (!isTreeEmpty() ? 'visible': 'hidden')
+          }}
+        >
+          {isAnimationPaused ? (
+            <FontAwesomeIcon icon={faPlay} className="icon" />
+          ) : (
+            <FontAwesomeIcon icon={faPause} className="icon" />
+          )}
+        </div>
+
+        {!isTreeEmpty() && (
+          <div
+            className="switch execution-log-switch"
+            onClick={toggleExecutionLogWindow}
+            style={{
+              animation: (closeExecutionLogWindow
+                ? 'toggleExecutionLogIconSlideDown 0.5s ease-in-out forwards'
+                : 'toggleExecutionLogIconSlideUp 0.5s ease-in-out forwards'
+              )
+            }}
+          >
+            {closeExecutionLogWindow ? (
+              <FontAwesomeIcon icon={faChevronUp} className="icon" />
+            ) : (
+              <FontAwesomeIcon icon={faChevronDown} className="icon" />
+            )}
+          </div>
+        )}
+
+        {!isTreeEmpty() && (
+          <div className="canvas-operation">
+            <div className="btn-container">
+              <div className="stat speed-stat">
+                <p>STEP</p>
+                <h3>{nextStepNumber}/{stepsToSolve.length - 1}</h3>
+              </div>
+
+              <button
+                className="vertical-btn"
+                ref={speedUpBtnRef}
+                onClick={increaseSpeed}
+              >
+                <FontAwesomeIcon icon={faCaretUp} className="icon" />
+                <p>SPEED</p>
+              </button>
+
+              <div className="stat speed-stat">
+                <p>SPEED</p>
+                <h3>{(100 - (animationSpeedInMS - 500)/100)}%</h3>
+              </div>
+            </div>
+
+            <div className="btn-container">
+              <button
+                className="horizontal-btn"
+                ref={prevStepBtnRef}
+                onClick={decrementStepManually}
+              >
+                <FontAwesomeIcon icon={faCaretLeft} className="icon" />
+                <p>STEP</p>
+              </button>
+
+              <button
+                className="vertical-btn"
+                ref={speedDownBtnRef}
+                onClick={decreaseSpeed}
+              >
+                <p>SPEED</p>
+                <FontAwesomeIcon icon={faCaretDown} className="icon" />
+              </button>
+
+              <button
+                className="horizontal-btn"
+                ref={nextStepBtnRef}
+                onClick={incrementStepManually}
+              >
+                <p>STEP</p>
+                <FontAwesomeIcon icon={faCaretRight} className="icon" />
+              </button>
+            </div>
+          </div>
+        )}
+      </CustomScrollbar>
     </div>
   );
 }
