@@ -2,7 +2,7 @@
 
 ## DEMO
 
-![Demo GIF](assets/demo.gif)
+<img src="assets/demo.gif" alt="Demo GIF" style="width:100%; height:100%;"/>
 
 ## [LICENSE](LICENSE)
 
